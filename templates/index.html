@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Galerias de Arquivos</title>
+    <style>
+        /* Estilos para a galeria de imagens */
+        .image-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px; /* Espaçamento entre as imagens */
+        }
+
+        .image-gallery img {
+            max-width: 200px;
+            max-height: 200px;
+        }
+
+        /* Estilos para a galeria de vídeos */
+        .video-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px; /* Espaçamento entre os vídeos */
+        }
+
+        .video-gallery video {
+            max-width: 200px;
+            max-height: 200px;
+        }
+
+        /* Estilos para a visualização de PDFs */
+        .pdf-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px; /* Espaçamento entre os PDFs */
+        }
+
+        .pdf-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .pdf-preview {
+            max-width: 200px;
+            max-height: 200px;
+        }
+
+        .download-button {
+            display: block;
+            margin-top: 5px;
+        }
+
+        /* Estilos para a galeria de arquivos ZIP */
+        .zip-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px; /* Espaçamento entre os arquivos ZIP */
+            margin: 15px; /* Margem de 15px de cada lado dos elementos .zip */
+        }
+
+        .zip-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .zip-download-button {
+            display: block;
+            margin-top: 5px;
+        }
+
+        /* Estilos para .exe e .iso com margem de 15px */
+        .exe-gallery,
+        .iso-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px; /* Espaçamento entre os arquivos ZIP */
+            margin: 15px; /* Margem de 15px de cada lado dos elementos .zip */
+
+        }
+    </style>
+</head>
+<body>
+    <h1>Galerias de Arquivos:</h1>
+
+    <h2>Arquivos PDF:</h2>
+    <div class="pdf-gallery" id="pdf-gallery"></div>
+
+    <h2>Imagens:</h2>
+    <div class="image-gallery" id="image-gallery"></div>
+
+    <h2>Vídeos:</h2>
+    <div class="video-gallery" id="video-gallery"></div>
+
+    <h2>Executáveis (.exe):</h2>
+    <div class="exe-gallery" id="exe-gallery"></div>
+
+    <h2>Arquivos ISO (.iso):</h2>
+    <div class="iso-gallery" id="iso-gallery"></div>
+
+    <h2>Arquivos ZIP:</h2>
+    <div class="zip-gallery" id="zip-gallery"></div>
+
+    <script>
+        function consumirAPI() {
+            // Cria um objeto de cabeçalho personalizado com o cabeçalho ngrok-skip-browser-warning
+            const headers = new Headers();
+            headers.append('ngrok-skip-browser-warning', 'true');
+
+            fetch('https://9a4d-190-52-73-40.ngrok-free.app', { headers: headers }) // Substitua pelo seu URL do Ngrok
+                .then(response => response.json())
+                .then(data => {
+                    // Filtra os arquivos por tipo
+                    const pdfFiles = data.filter(item => item.endsWith('.pdf'));
+                    const imageFiles = data.filter(item => item.match(/\.(jpeg|jpg|png|gif)$/));
+                    const videoFiles = data.filter(item => item.match(/\.(mp4|avi|mov)$/));
+                    const exeFiles = data.filter(item => item.endsWith('.exe'));
+                    const isoFiles = data.filter(item => item.endsWith('.iso'));
+                    const zipFiles = data.filter(item => item.endsWith('.zip'));
+
+                    // Monta galeria de arquivos PDF
+                    const pdfGallery = document.getElementById('pdf-gallery');
+                    pdfFiles.forEach(item => {
+                        // Cria um contêiner para a visualização e o botão de download
+                        const container = document.createElement('div');
+                        container.className = 'pdf-container';
+
+                        // Visualização do PDF
+                        const pdfPreview = document.createElement('embed');
+                        pdfPreview.src = "https://9a4d-190-52-73-40.ngrok-free.app/arquivos/" + item;
+                        pdfPreview.className = 'pdf-preview';
+
+                        // Botão de download
+                        const downloadButton = document.createElement('a');
+                        downloadButton.href = "https://9a4d-190-52-73-40.ngrok-free.app/arquivos/" + item;
+                        downloadButton.download = item;
+                        downloadButton.textContent = 'Download';
+                        downloadButton.className = 'download-button';
+
+                        container.appendChild(pdfPreview);
+                        container.appendChild(downloadButton);
+                        pdfGallery.appendChild(container);
+                    });
+
+                    // Monta galeria de imagens
+                    const imageGallery = document.getElementById('image-gallery');
+                    imageFiles.forEach(item => {
+                        const img = document.createElement('img');
+                        img.src = "https://9a4d-190-52-73-40.ngrok-free.app/arquivos/" + item;
+
+                        imageGallery.appendChild(img);
+                    });
+
+                    // Monta galeria de vídeos
+                    const videoGallery = document.getElementById('video-gallery');
+                    videoFiles.forEach(item => {
+                        const video = document.createElement('video');
+                        video.controls = true;
+                        video.src = "https://9a4d-190-52-73-40.ngrok-free.app/arquivos/" + item;
+
+                        videoGallery.appendChild(video);
+                    });
+
+                    // Monta galeria de executáveis (.exe)
+                    const exeGallery = document.getElementById('exe-gallery');
+                    exeFiles.forEach(item => {
+                        const link = document.createElement('a');
+                        link.href = "https://9a4d-190-52-73-40.ngrok-free.app/arquivos/" + item;
+                        link.target = '_blank';
+                        link.textContent = item;
+
+                        exeGallery.appendChild(link);
+                    });
+
+                    // Monta galeria de arquivos ISO (.iso)
+                    const isoGallery = document.getElementById('iso-gallery');
+                    isoFiles.forEach(item => {
+                        const link = document.createElement('a');
+                        link.href = "https://9a4d-190-52-73-40.ngrok-free.app/arquivos/" + item;
+                        link.target = '_blank';
+                        link.textContent = item;
+
+                        isoGallery.appendChild(link);
+                    });
+
+                    // Monta galeria de arquivos ZIP
+                    const zipGallery = document.getElementById('zip-gallery');
+                    zipFiles.forEach(item => {
+                        // Cria um contêiner para o nome do arquivo e o botão de download de ZIP
+                        const container = document.createElement('div');
+                        container.className = 'zip-container';
+
+                        // Nome do arquivo ZIP
+                        const zipName = document.createElement('span');
+                        zipName.textContent = item;
+
+                        // Botão de download de ZIP
+                        const zipDownloadButton = document.createElement('a');
+                        zipDownloadButton.href = "https://9a4d-190-52-73-40.ngrok-free.app/arquivos/" + item;
+                        zipDownloadButton.download = item;
+                        zipDownloadButton.textContent = 'Download';
+                        zipDownloadButton.className = 'zip-download-button';
+
+                        container.appendChild(zipName);
+                        container.appendChild(zipDownloadButton);
+                        zipGallery.appendChild(container);
+                    });
+                })
+                .catch(error => console.error(error));
+        }
+
+        // Chame a função para consumir a API quando a página carregar
+        window.onload = consumirAPI;
+    </script>
+</body>
+</html>
